@@ -14,9 +14,8 @@ target_link_libraries(messaging PRIVATE
 )
 add_dependencies(messaging SERVICES_H)
 
-
 add_executable(bridge bridge.cc)
-target_include_directories(bridge PUBLIC ${CMAKE_SOURCE_DIR}/third_party/json11 ..)
+target_include_directories(bridge PUBLIC ..)
 target_link_libraries(bridge PUBLIC common messaging json11 ${ZMQ_LINK_LIBRARIES})
 add_dependencies(bridge SERVICES_H)
 

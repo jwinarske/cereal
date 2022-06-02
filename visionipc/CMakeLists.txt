@@ -3,7 +3,6 @@ set(SRC_FILES
     visionipc_server.cc
     visionipc_client.cc
     visionbuf.cc
-
     visionbuf_cl.cc
 )
 if (BUILD_QCOM)
@@ -13,12 +12,7 @@ endif()
 add_library(visionipc SHARED ${SRC_FILES})
 target_include_directories(visionipc PUBLIC . ..)
 
-if (APPLE)
-    set(vipc_frameworks "-framework OpenCL")
-else()
-    set(vipc_frameworks OpenCL)
-endif()
-target_link_libraries(visionipc messaging cereal ${vipc_frameworks})
+target_link_libraries(visionipc messaging cereal OpenCL::OpenCL)
 
 add_cython_target(visionipc_pyx visionipc_pyx.pyx CXX)
 add_library(visionipc_pyx MODULE ${visionipc_pyx})
