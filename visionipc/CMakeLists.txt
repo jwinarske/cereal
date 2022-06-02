@@ -35,4 +35,5 @@ if(BUILD_TESTING)
         visionipc
         pthread
     )
+    add_test(NAME visionipc_test_runner COMMAND visionipc_test_runner)
 endif()

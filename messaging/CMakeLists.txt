@@ -31,4 +31,5 @@ if(BUILD_TESTING)
         msgq_tests.cc
     )
     target_link_libraries(messaging_test_runner PUBLIC messaging common)
+    add_test(NAME messaging_test_runner COMMAND messaging_test_runner)
 endif()
