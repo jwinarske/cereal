@@ -11,13 +11,15 @@ endif()
 
 add_library(visionipc SHARED ${SRC_FILES})
 target_include_directories(visionipc PUBLIC . ..)
-
 target_link_libraries(visionipc messaging cereal OpenCL::OpenCL)
+add_ipo(visionipc)
 
-add_cython_target(visionipc_pyx visionipc_pyx.pyx CXX)
-add_library(visionipc_pyx MODULE ${visionipc_pyx})
-target_include_directories(visionipc_pyx PRIVATE ${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/..)
-target_link_libraries(visionipc_pyx PRIVATE ${Python3_LIBRARIES} visionipc)
+add_cython_target(cereal.visionipc.visionipc_pyx visionipc_pyx.pyx CXX PY3)
+add_library(cereal.visionipc.visionipc_pyx MODULE ${cereal.visionipc.visionipc_pyx})
+set_target_properties(cereal.visionipc.visionipc_pyx PROPERTIES PREFIX "" OUTPUT_NAME "visionipc_pyx")
+target_include_directories(cereal.visionipc.visionipc_pyx PRIVATE ${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_link_libraries(cereal.visionipc.visionipc_pyx PRIVATE ${Python3_LIBRARIES} visionipc)
+add_ipo(cereal.visionipc.visionipc_pyx)
 
 if(BUILD_TESTING)
     add_executable(visionipc_test_runner
