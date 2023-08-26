@@ -1,10 +1,15 @@
 #pragma once
+
 #include <cstddef>
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
+#include <time.h>
+
 #include <capnp/serialize.h>
-#include "../gen/cpp/log.capnp.h"
+
+#include "cereal/gen/cpp/log.capnp.h"
 
 #ifdef __APPLE__
 #define CLOCK_BOOTTIME CLOCK_MONOTONIC
@@ -18,7 +23,7 @@ class Context {
 public:
   virtual void * getRawContext() = 0;
   static Context * create();
-  virtual ~Context(){};
+  virtual ~Context(){}
 };
 
 class Message {
@@ -28,7 +33,7 @@ public:
   virtual void close() = 0;
   virtual size_t getSize() = 0;
   virtual char * getData() = 0;
-  virtual ~Message(){};
+  virtual ~Message(){}
 };
 
 
@@ -40,7 +45,7 @@ public:
   virtual void * getRawSocket() = 0;
   static SubSocket * create();
   static SubSocket * create(Context * context, std::string endpoint, std::string address="127.0.0.1", bool conflate=false, bool check_endpoint=true);
-  virtual ~SubSocket(){};
+  virtual ~SubSocket(){}
 };
 
 class PubSocket {
@@ -52,7 +57,7 @@ public:
   static PubSocket * create();
   static PubSocket * create(Context * context, std::string endpoint, bool check_endpoint=true);
   static PubSocket * create(Context * context, std::string endpoint, int port, bool check_endpoint=true);
-  virtual ~PubSocket(){};
+  virtual ~PubSocket(){}
 };
 
 class Poller {
@@ -61,7 +66,7 @@ public:
   virtual std::vector<SubSocket*> poll(int timeout) = 0;
   static Poller * create();
   static Poller * create(std::vector<SubSocket*> sockets);
-  virtual ~Poller(){};
+  virtual ~Poller(){}
 };
 
 class SubMaster {
@@ -109,6 +114,18 @@ public:
   kj::ArrayPtr<capnp::byte> toBytes() {
     heapArray_ = capnp::messageToFlatArray(*this);
     return heapArray_.asBytes();
+  }
+
+  size_t getSerializedSize() {
+    return capnp::computeSerializedSizeInWords(*this) * sizeof(capnp::word);
+  }
+
+  int serializeToBuffer(unsigned char *buffer, size_t buffer_size) {
+    size_t serialized_size = getSerializedSize();
+    if (serialized_size > buffer_size) { return -1; }
+    kj::ArrayOutputStream out(kj::ArrayPtr<capnp::byte>(buffer, buffer_size));
+    capnp::writeMessage(out, *this);
+    return serialized_size;
   }
 
 private:

@@ -5,9 +5,9 @@
 #include <atomic>
 #include <map>
 
-#include "messaging/messaging.h"
-#include "visionipc/visionipc.h"
-#include "visionipc/visionbuf.h"
+#include "cereal/messaging/messaging.h"
+#include "cereal/visionipc/visionipc.h"
+#include "cereal/visionipc/visionbuf.h"
 
 std::string get_endpoint_name(std::string name, VisionStreamType type);
 
@@ -23,7 +23,6 @@ class VisionIpcServer {
 
   std::map<VisionStreamType, std::atomic<size_t> > cur_idx;
   std::map<VisionStreamType, std::vector<VisionBuf*> > buffers;
-  std::map<VisionStreamType, std::map<VisionBuf*, size_t> > idxs;
 
   Context * msg_ctx;
   std::map<VisionStreamType, PubSocket*> sockets;
